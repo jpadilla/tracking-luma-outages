@@ -1,0 +1,5 @@
+black
+isort
+flake8
+pre-commit
+seed-isort-config

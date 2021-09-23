@@ -1,0 +1,31 @@
+name: Generate data files
+
+on:
+  schedule:
+    - cron: "0 0 * * 0"
+  workflow_dispatch:
+
+jobs:
+  data:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+      - name: Install dependencies
+        run: make install
+      - name: Scrape
+        run: python -m src
+      - name: Commit to repository
+        env:
+          GITHUB_TOKEN: ${{ secrets.github_token }}
+          COMMIT_MSG: |
+            Add latest data files
+            skip-checks: true
+        run: |
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          git config user.name "$GITHUB_ACTOR"
+          git checkout main
+          git add .
+          git diff --quiet && git diff --staged --quiet || (git commit -m "${COMMIT_MSG}"; git push origin main)

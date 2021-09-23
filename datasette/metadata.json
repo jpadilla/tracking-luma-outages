@@ -1,0 +1,20 @@
+{
+  "title": "Interrupciones de Servicio Reportado por LUMA",
+  "description_html": "<p>Record de datos de interrupciones de servicio reportados por LUMA Energy en Puerto Rico a través de el portal de Mi LUMA.</p><p>This website is open-source and not affiliated with the Government of Puerto Rico or LUMA Energy.</p>",
+  "source": "Original Data Source",
+  "source_url": "https://miluma.lumapr.com/outages/outageMap",
+  "databases": {
+    "data": {
+      "queries": {
+        "outages_by_date": {
+          "title": "Outages by date",
+          "sql": "select strftime('%Y-%m-%d', created_at) date, COUNT(zone) from outages group by date order by date limit 101"
+        },
+        "outages_by_region_and_date": {
+          "title": "Outages by region and date",
+          "sql": "select region, COUNT(zone), strftime('%Y-%m-%d', created_at) date from outages group by date, region order by date, region limit 101"
+        }
+      }
+    }
+  }
+}
