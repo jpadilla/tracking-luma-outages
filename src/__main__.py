@@ -15,7 +15,7 @@ OUTAGES_DATA_PATH = DATA_BASE_PATH / "outages"
 RUNS_DATA_PATH = DATA_BASE_PATH / "runs"
 
 # Date format used for data files
-DATE_FORMAT_STR = "%Y%m%d%H%M%S%f"
+DATE_FORMAT_STR = "%Y%m%d%H"
 
 
 class JSONEncoder(json.JSONEncoder):

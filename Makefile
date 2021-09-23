@@ -18,10 +18,18 @@ update-deps:
 	CUSTOM_COMPILE_COMMAND=$(CUSTOM_COMPILE_COMMAND) pip-compile --upgrade --build-isolation --generate-hashes --output-file requirements/dev.txt requirements/dev.in
 
 run-datasette:
-	datasette serve --metadata datasette/metadata.json datasette/data.db
+	datasette serve \
+		--metadata datasette/metadata.json \
+		datasette/data.db
 
 run-scrape:
 	python -m src
+
+publish:
+	datasette publish cloudrun \
+		--metadata datasette/metadata.json \
+		--service=tracking-luma-outages \
+		datasette/data.db
 
 install-precommit:
 	pre-commit install
