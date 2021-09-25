@@ -8,14 +8,33 @@
     "data": {
       "queries": {
         "outages_by_date": {
-          "title": "Outages by date",
-          "sql": "select strftime('%Y-%m-%d', created_at) date, COUNT(zone) from outages group by date order by date limit 101"
+          "title": "Total de interrupciones de servicio por fecha",
+          "sql": "select strftime('%Y-%m-%d', created_at) date, COUNT(zone) from outages group by date order desc by date"
         },
         "outages_by_region_and_date": {
-          "title": "Outages by region and date",
-          "sql": "select region, COUNT(zone), strftime('%Y-%m-%d', created_at) date from outages group by date, region order by date, region limit 101"
+          "title": "Interrupciones de servicio por region y fecha",
+          "sql": "select region, COUNT(zone), strftime('%Y-%m-%d', created_at) date from outages group by date, region order by date desc, region"
+        },
+        "affected_customers_by_region_and_date": {
+          "title": "Clientes sin servicio por region y fecha",
+          "sql": "select strftime('%Y-%m-%d', created_at) date, region, total_customers, affected_customers from customers group by date, region order by date"
         }
       }
     }
-  }
+  },
+  "extra_css_urls": [
+    {
+      "url": "https://cdnjs.cloudflare.com/ajax/libs/billboard.js/3.2.0-next.5/billboard.min.css",
+      "sri": "sha512-Yr/Qqzct3+BSGDBFtK3dBBQqK37Ae598fxd0SGbK0iNQjLcnOup/vfcKA1HZArITHhWV61vw6mXVI12MiWzb0A=="
+    }
+  ],
+  "extra_js_urls": [
+    {
+      "url": "https://cdn.jsdelivr.net/npm/whatwg-fetch@3.6.2/dist/fetch.umd.min.js"
+    },
+    {
+      "url": "https://cdnjs.cloudflare.com/ajax/libs/billboard.js/3.2.0-next.5/billboard.pkgd.min.js",
+      "sri": "sha512-oq+ls3izfpwqmH8Z4PBTW7jsCilBOLIFYIcPtYQkPhR9BSnfLtTgc+V7Qi5/UFrVwa3lAPFK92z2ulBH18wq6g=="
+    }
+  ]
 }

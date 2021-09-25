@@ -20,6 +20,7 @@ update-deps:
 run-datasette:
 	datasette serve \
 		--metadata datasette/metadata.json \
+		--template-dir=datasette/templates \
 		datasette/data.db
 
 run-scrape:
