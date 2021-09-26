@@ -29,6 +29,7 @@ run-scrape:
 publish:
 	datasette publish cloudrun \
 		--metadata datasette/metadata.json \
+		--template-dir=datasette/templates \
 		--service=tracking-luma-outages \
 		datasette/data.db
 
