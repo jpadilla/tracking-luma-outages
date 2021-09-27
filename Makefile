@@ -20,6 +20,7 @@ update-deps:
 run-datasette:
 	datasette serve \
 		--metadata datasette/metadata.json \
+		--static static:datasette/static/ \
 		--template-dir=datasette/templates \
 		datasette/data.db
 
@@ -29,6 +30,7 @@ run-scrape:
 publish:
 	datasette publish cloudrun \
 		--metadata datasette/metadata.json \
+		--static static:datasette/static/ \
 		--template-dir=datasette/templates \
 		--service=tracking-luma-outages \
 		datasette/data.db

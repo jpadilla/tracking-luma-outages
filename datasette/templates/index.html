@@ -4,89 +4,46 @@
 <style>
   #timeseriesChart .bb-title { font-size: 17px; font-weight: bold; }
 </style>
-<script>
-function fetchData() {
-  return fetch("/data/affected_customers_by_region_and_date.json").then(
-    function (response) {
-      if (response.status >= 400) {
-        throw new Error("Bad response from server");
-      }
-      return response.json();
-    }
-  );
-}
-
-function generateChart() {
-  return bb.generate({
-    data: {
-      x: "x",
-      columns: [],
-      type: "line",
-    },
-    axis: {
-      x: {
-        type: "timeseries",
-        tick: {
-          format: "%Y-%m-%d",
-        },
-      },
-    },
-    title: {
-      text: "% Clientes Sin Servicio por día",
-    },
-    bindto: "#timeseriesChart",
-  });
-}
-
-document.addEventListener("DOMContentLoaded", function () {
-  let chart = generateChart();
-
-  fetchData().then(function (data) {
-    let results = data.rows.map(function (row) {
-      let rowObj = data.columns.reduce(function (prev, val, idx) {
-        prev[val] = row[idx];
-        return prev;
-      }, {});
-      rowObj.value = rowObj.affected_customers / rowObj.total_customers;
-      return rowObj;
-    });
-
-    let dates = results.map(function (r) {
-      return r.date;
-    });
-    let regions = results.map(function (r) {
-      return r.region;
-    });
-    let uniqueDates = Array.from(new Set(dates));
-    let uniqueRegions = Array.from(new Set(regions));
-    let columns = [
-      ["x"].concat(uniqueDates),
-    ].concat(
-      uniqueRegions.map(function (region) {
-          return [region].concat(
-            results
-              .filter(function (r) {
-                return r.region === region;
-              })
-              .map(function (r) {
-                return r.value;
-              })
-          );
-        })
-    )
-
-    chart.load({
-      columns: columns,
-    });
-  });
-});
-</script>
 {% endblock %}
 
 {% block content %}
+<h1>{{ metadata.title or "Datasette" }}{% if private %} 🔒{% endif %}</h1>
 
-{{ super() }}
+{% block description_source_license %}{% include "_description_source_license.html" %}{% endblock %}
 
 <div id="timeseriesChart" style="width:75%"></div>
+
+<div hx-ext="client-side-templates">
+  <div hx-get="/data.json" hx-trigger="load" mustache-template="data-queries"></div>
+  {% raw %}
+  <template id="data-queries">
+    <h2>Búsquedas:</h2>
+    <ul class="bullets">
+      {{#queries}}
+      <li>
+        <a href="/data/{{name}}">{{title}}</a>
+      </li>
+      {{/queries}}
+    </ul>
+  </template>
+  {% endraw %}
+</div>
+
+<h2>Datos:</h2>
+
+{% for database in databases %}
+  <h2 style="padding-left: 10px; border-left: 10px solid #{{ database.color }}"><a href="{{ urls.database(database.name) }}">{{ database.name }}</a>{% if database.private %} 🔒{% endif %}</h2>
+  <p>
+    {% if database.show_table_row_counts %}{{ "{:,}".format(database.table_rows_sum) }} rows in {% endif %}{{ database.tables_count }} table{% if database.tables_count != 1 %}s{% endif %}{% if database.tables_count and database.hidden_tables_count %}, {% endif -%}
+    {% if database.hidden_tables_count -%}
+        {% if database.show_table_row_counts %}{{ "{:,}".format(database.hidden_table_rows_sum) }} rows in {% endif %}{{ database.hidden_tables_count }} hidden table{% if database.hidden_tables_count != 1 %}s{% endif -%}
+    {% endif -%}
+    {% if database.views_count -%}
+        {% if database.tables_count or database.hidden_tables_count %}, {% endif -%}
+        {{ "{:,}".format(database.views_count) }} view{% if database.views_count != 1 %}s{% endif %}
+    {% endif %}
+  </p>
+  <p>{% for table in database.tables_and_views_truncated %}<a href="{{ urls.table(database.name, table.name) }}"{% if table.count %} title="{{ table.count }} rows"{% endif %}>{{ table.name }}</a>{% if table.private %} 🔒{% endif %}{% if not loop.last %}, {% endif %}{% endfor %}{% if database.tables_and_views_more %}, <a href="{{ urls.database(database.name) }}">...</a>{% endif %}</p>
+{% endfor %}
 
 {% endblock %}

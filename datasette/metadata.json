@@ -9,7 +9,7 @@
       "queries": {
         "outages_by_date": {
           "title": "Total de interrupciones de servicio por fecha",
-          "sql": "select strftime('%Y-%m-%d', created_at) date, COUNT(zone) from outages group by date order desc by date"
+          "sql": "select strftime('%Y-%m-%d', created_at) date, COUNT(zone) from outages group by date order by date desc"
         },
         "outages_by_region_and_date": {
           "title": "Interrupciones de servicio por region y fecha",
@@ -29,6 +29,21 @@
     }
   ],
   "extra_js_urls": [
+    {
+      "url": "/static/app.js"
+    },
+    {
+      "url": "https://cdnjs.cloudflare.com/ajax/libs/htmx/1.5.0/htmx.min.js",
+      "sri": "sha512-WRBkI8nUH4mTtA+x64sAqNkMxWuksID4E05fT+ks2mCIvfb6tyKbAaDPLKeqJvbFc4LcF1DdAOmZJ0RDIWodxQ=="
+    },
+    {
+      "url": "https://cdnjs.cloudflare.com/ajax/libs/htmx/1.5.0/ext/client-side-templates.min.js",
+      "sri": "sha512-MLlua/4xnuseD7b9u8Digq15qUeWRoaX9vsnTSzN8o/uACkrHj/Add7WDZTjTsBmtG344BRiILBSPWWljpOUqQ=="
+    },
+    {
+      "url": "https://unpkg.com/mustache@4.2.0/mustache.min.js",
+      "sri": "sha384-WASZCYHGuIg0bwkJEH65mhmbKS1x4/VKI2bzElPKmL5B3e0UaH45nIdqOm+BUuRA"
+    },
     {
       "url": "https://cdn.jsdelivr.net/npm/whatwg-fetch@3.6.2/dist/fetch.umd.min.js"
     },
