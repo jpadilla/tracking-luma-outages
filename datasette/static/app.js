@@ -11,6 +11,10 @@ function fetchData() {
 
 function generateChart() {
   return bb.generate({
+    zoom: {
+      enabled: true,
+      type: "drag"
+    },
     data: {
       x: "x",
       columns: [],
@@ -20,7 +24,7 @@ function generateChart() {
       x: {
         type: "timeseries",
         tick: {
-          format: "%Y-%m-%d",
+          format: "%Y-%m-%d %H:%M",
         },
       },
     },
@@ -53,7 +57,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let uniqueDates = Array.from(new Set(dates));
     let uniqueRegions = Array.from(new Set(regions));
     let columns = [
-      ["x"].concat(uniqueDates),
+      ["x"].concat(uniqueDates.map(function(d) { return new Date(d); })),
     ].concat(
       uniqueRegions.map(function (region) {
           return [region].concat(

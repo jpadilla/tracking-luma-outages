@@ -11,7 +11,7 @@
 
 {% block description_source_license %}{% include "_description_source_license.html" %}{% endblock %}
 
-<div id="timeseriesChart" style="width:75%"></div>
+<div id="timeseriesChart"></div>
 
 <div hx-ext="client-side-templates">
   <div hx-get="/data.json" hx-trigger="load" mustache-template="data-queries"></div>
