@@ -21,6 +21,13 @@ function generateChart() {
       type: "line",
     },
     axis: {
+      y: {
+        tick: {
+          format: function(d) {
+            return d + "%";
+          }
+        }
+      },
       x: {
         type: "timeseries",
         tick: {
