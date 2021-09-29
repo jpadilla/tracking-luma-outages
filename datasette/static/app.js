@@ -31,7 +31,7 @@ function generateChart() {
       x: {
         type: "timeseries",
         tick: {
-          format: "%Y-%m-%d %H:%M",
+          format: "%Y-%m-%d %I %p",
         },
       },
     },
@@ -61,10 +61,12 @@ document.addEventListener("DOMContentLoaded", function () {
     let regions = results.map(function (r) {
       return r.region;
     });
-    let uniqueDates = Array.from(new Set(dates));
+    let uniqueDates = Array.from(new Set(dates)).map(function(d) {
+      return new Date(d);
+    });
     let uniqueRegions = Array.from(new Set(regions));
     let columns = [
-      ["x"].concat(uniqueDates.map(function(d) { return new Date(d); })),
+      ["x"].concat(uniqueDates),
     ].concat(
       uniqueRegions.map(function (region) {
           return [region].concat(
