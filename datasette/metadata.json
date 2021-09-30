@@ -8,16 +8,24 @@
     "data": {
       "queries": {
         "outages_by_date": {
-          "title": "Total de interrupciones de servicio por fecha",
-          "sql": "select strftime('%Y/%m/%d %H:00:00', created_at) date, COUNT(zone) from outages group by date order by date desc"
+          "title": "Total de sectores sin servicio por fecha",
+          "sql": "select strftime('%Y/%m/%d %H:00:00', created_at) date, COUNT(zone) count from outages group by date order by date desc",
+          "params": ["_"]
         },
         "outages_by_region_and_date": {
-          "title": "Interrupciones de servicio por region y fecha",
-          "sql": "select region, COUNT(zone), strftime('%Y/%m/%d %H:00:00', created_at) date from outages group by date, region order by date desc, region"
+          "title": "Total de sectores sin servicio por pueblo y fecha",
+          "sql": "select region, COUNT(zone) count, strftime('%Y/%m/%d %H:00:00', created_at) date from outages group by date, region order by date desc, region",
+          "params": ["_"]
         },
         "affected_customers_by_region_and_date": {
           "title": "Clientes sin servicio por region y fecha",
-          "sql": "select strftime('%Y/%m/%d %H:00:00', created_at) date, region, total_customers, affected_customers from customers group by date, region order by date"
+          "sql": "select strftime('%Y/%m/%d %H:00:00', created_at) date, region, total_customers, affected_customers from customers group by date, region order by date",
+          "params": ["_"]
+        },
+        "affected_customers_by_date": {
+          "title": "Total de clientes sin servicio por fecha",
+          "sql": "select strftime('%Y/%m/%d %H:00:00', created_at) date, SUM(total_customers) total_customers, SUM(affected_customers) affected_customers from customers group by date order by date",
+          "params": ["_"]
         }
       }
     }

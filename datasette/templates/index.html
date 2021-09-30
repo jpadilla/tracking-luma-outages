@@ -2,7 +2,8 @@
 
 {% block extra_head %}
 <style>
-  #timeseriesChart .bb-title { font-size: 17px; font-weight: bold; }
+  .bb { margin: 15px 0 15px 0; }
+  .bb-title { font-size: 17px; font-weight: bold; }
 </style>
 {% endblock %}
 
@@ -11,7 +12,8 @@
 
 {% block description_source_license %}{% include "_description_source_license.html" %}{% endblock %}
 
-<div id="timeseriesChart"></div>
+<div id="chart-affected-customers-by-date"></div>
+<div id="chart-outages-by-date"></div>
 
 <div hx-ext="client-side-templates">
   <div hx-get="/data.json" hx-trigger="load" mustache-template="data-queries"></div>
