@@ -52,10 +52,10 @@ def get_outages():
         for outage in outages:
             area = outage.get("area")
             zone = outage.get("zone")
-            
+
             if not area or not zone:
                 raise Exception(f"invalid area({area}) or zone({zone}) for region({region})")
-            
+
             results.append(
                 {"region": region, "area": area, "zone": zone}
             )
