@@ -8,8 +8,8 @@
     "data": {
       "queries": {
         "outages_by_date": {
-          "title": "Total de sectores sin servicio por fecha",
-          "sql": "select strftime('%Y/%m/%d %H:00:00', created_at) date, COUNT(zone) count from outages group by date order by date desc",
+          "title": "Total de sectores sin servicio por fecha en los últimos 30 días",
+          "sql": "select strftime('%Y/%m/%d %H:00:00', created_at) date, COUNT(zone) count from outages where created_at > DATETIME('now', '-30 day') group by date order by date desc",
           "params": ["_"]
         },
         "outages_by_region_and_date": {
@@ -18,8 +18,8 @@
           "params": ["_"]
         },
         "affected_customers_by_region_and_date": {
-          "title": "Clientes sin servicio por region y fecha",
-          "sql": "select strftime('%Y/%m/%d %H:00:00', created_at) date, region, total_customers, affected_customers from customers group by date, region order by date",
+          "title": "Clientes sin servicio por region y fecha en los últimos 30 días",
+          "sql": "select strftime('%Y/%m/%d %H:00:00', created_at) date, region, total_customers, affected_customers from customers where created_at > DATETIME('now', '-30 day') group by date, region order by date",
           "params": ["_"]
         },
         "affected_customers_by_date": {
