@@ -1,15 +1,15 @@
 repos:
 -   repo: https://github.com/ambv/black
-    rev: 21.9b0
+    rev: 22.3.0
     hooks:
     - id: black
 
 -   repo: https://github.com/pre-commit/mirrors-isort
-    rev: v5.9.3
+    rev: v5.10.1
     hooks:
     -   id: isort
 
--   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v2.1.0
+-   repo: https://github.com/PyCQA/flake8
+    rev: 4.0.1
     hooks:
     -   id: flake8
