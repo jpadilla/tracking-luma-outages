@@ -5,7 +5,7 @@ init:
 	. .venv/bin/activate
 
 install:
-	pip install --upgrade -r requirements/main.txt  -r requirements/dev.txt
+	pip install --upgrade -r requirements/main.txt
 
 install-dev:
 	pip install --upgrade -r requirements/dev.txt
