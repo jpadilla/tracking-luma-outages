@@ -22,5 +22,5 @@ $ make run-datasette
 
 ## Data sources
 
-- https://webapps.prepa.com/pls/web/f?p=141:1:0
+- https://api.miluma.lumapr.com/miluma-outage-api/outage/regionsWithoutService
 - https://api.miluma.lumapr.com/miluma-outage-api/outage/municipality/towns

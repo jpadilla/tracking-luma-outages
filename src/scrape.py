@@ -1,38 +1,28 @@
-import locale
-
 import requests
-from parsel import Selector
 
 from src.constants import TOWNS
-
-locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
 
 
 def get_clients_without_service():
     s = requests.Session()
-    r = s.get("https://webapps.prepa.com/pls/web/f?p=141:1:0")
+    r = s.get(
+        "https://api.miluma.lumapr.com/miluma-outage-api/outage/regionsWithoutService"
+    )
 
-    selector = Selector(text=r.text)
-    rows = selector.css("table.uReport").css("tbody > tr")
-
+    response = r.json()
     results = []
 
-    for i, row in enumerate(rows):
-        if i + 1 == len(rows):
-            # Skipping last row since it's just aggregation
-            continue
-
-        # Skipping last column since it's just aggregation
-        region = row.css('td[headers="REGION"]::text').get()
-        total_customers = row.css('td[headers="TCUSTOMERS"]::text').get()
-        no_service_customers = row.css('td[headers="NOSERVICE"]::text').get()
+    for row in response.get("regions") or []:
+        region = row.get("name")
+        total_customers = row.get("totalClients")
+        no_service_customers = row.get("totalClientsWithoutService")
 
         if region:
             results.append(
                 {
-                    "region": region,
-                    "total_customers": locale.atoi(total_customers),
-                    "affected_customers": locale.atoi(no_service_customers),
+                    "region": region.upper(),
+                    "total_customers": total_customers,
+                    "affected_customers": no_service_customers,
                 }
             )
 
