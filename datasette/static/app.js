@@ -30,7 +30,7 @@ function generateAffectedCustomersChart() {
       },
     },
     title: {
-      text: 'Total de clientes sin servicio en los últimos 30 días',
+      text: 'Total de clientes sin servicio en los últimos 7 días',
     },
     bindto: '#chart-affected-customers-by-date',
   });
@@ -99,7 +99,7 @@ function generateTotalOutagesChart() {
       },
     },
     title: {
-      text: 'Total de sectores sin servicio en los últimos 30 días',
+      text: 'Total de sectores sin servicio en los últimos 7 días',
     },
     bindto: '#chart-outages-by-date',
   });

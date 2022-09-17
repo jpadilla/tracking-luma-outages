@@ -8,8 +8,8 @@
     "data": {
       "queries": {
         "outages_by_date": {
-          "title": "Total de sectores sin servicio por fecha en los últimos 30 días",
-          "sql": "select strftime('%Y/%m/%d %H:00:00', created_at) date, COUNT(zone) count from outages where created_at > DATETIME('now', '-30 day') group by date order by date desc",
+          "title": "Total de sectores sin servicio por fecha en los últimos 7 días",
+          "sql": "select strftime('%Y/%m/%d %H:00:00', created_at) date, COUNT(zone) count from outages where created_at > DATETIME('now', '-7 day') group by date order by date desc",
           "params": ["_"]
         },
         "outages_by_region_and_date": {
@@ -18,8 +18,8 @@
           "params": ["_"]
         },
         "affected_customers_by_region_and_date": {
-          "title": "Clientes sin servicio por region y fecha en los últimos 30 días",
-          "sql": "select strftime('%Y/%m/%d %H:00:00', created_at) date, region, total_customers, affected_customers from customers where created_at > DATETIME('now', '-30 day') group by date, region order by date",
+          "title": "Clientes sin servicio por region y fecha en los últimos 7 días",
+          "sql": "select strftime('%Y/%m/%d %H:00:00', created_at) date, region, total_customers, affected_customers from customers where created_at > DATETIME('now', '-7 day') group by date, region order by date",
           "params": ["_"]
         },
         "affected_customers_by_date": {
@@ -32,8 +32,8 @@
   },
   "extra_css_urls": [
     {
-      "url": "https://cdnjs.cloudflare.com/ajax/libs/billboard.js/3.2.0-next.5/billboard.min.css",
-      "sri": "sha512-Yr/Qqzct3+BSGDBFtK3dBBQqK37Ae598fxd0SGbK0iNQjLcnOup/vfcKA1HZArITHhWV61vw6mXVI12MiWzb0A=="
+      "url": "https://cdnjs.cloudflare.com/ajax/libs/billboard.js/3.5.1/billboard.min.css",
+      "sri": "sha512-RMOXiaUbYERixbCxwbAyhJcq/KDpbXMZGLLUbexHB5JWdXsZONmsv2tLycOcTnAGCDZ9qPGG5pbd6bnL8YRhSw=="
     }
   ],
   "extra_js_urls": [
@@ -41,12 +41,12 @@
       "url": "/static/app.js"
     },
     {
-      "url": "https://cdnjs.cloudflare.com/ajax/libs/htmx/1.5.0/htmx.min.js",
-      "sri": "sha512-WRBkI8nUH4mTtA+x64sAqNkMxWuksID4E05fT+ks2mCIvfb6tyKbAaDPLKeqJvbFc4LcF1DdAOmZJ0RDIWodxQ=="
+      "url": "https://cdnjs.cloudflare.com/ajax/libs/htmx/1.8.0/htmx.min.js",
+      "sri": "sha512-pAiuCmE/l23W+pUbrRbAvtaQnu8Opglr+TAsbNrTaxeyOimIch50OhJ+oa1cllrLJkUudO3H1d2zEmWvYcmbQw=="
     },
     {
-      "url": "https://cdnjs.cloudflare.com/ajax/libs/htmx/1.5.0/ext/client-side-templates.min.js",
-      "sri": "sha512-MLlua/4xnuseD7b9u8Digq15qUeWRoaX9vsnTSzN8o/uACkrHj/Add7WDZTjTsBmtG344BRiILBSPWWljpOUqQ=="
+      "url": "https://cdnjs.cloudflare.com/ajax/libs/htmx/1.8.0/ext/client-side-templates.min.js",
+      "sri": "sha512-Wl8Ie059wTOxQ71DgtEiJ8kND9iaN1pvhGb7pgGkzdoAJdC7VL1CEy0Wz6hW5beh2Sa5zdTCpPIQSYHyfM5Quw=="
     },
     {
       "url": "https://unpkg.com/mustache@4.2.0/mustache.min.js",
@@ -56,8 +56,8 @@
       "url": "https://cdn.jsdelivr.net/npm/whatwg-fetch@3.6.2/dist/fetch.umd.min.js"
     },
     {
-      "url": "https://cdnjs.cloudflare.com/ajax/libs/billboard.js/3.2.0-next.5/billboard.pkgd.min.js",
-      "sri": "sha512-oq+ls3izfpwqmH8Z4PBTW7jsCilBOLIFYIcPtYQkPhR9BSnfLtTgc+V7Qi5/UFrVwa3lAPFK92z2ulBH18wq6g=="
+      "url": "https://cdnjs.cloudflare.com/ajax/libs/billboard.js/3.5.1/billboard.pkgd.min.js",
+      "sri": "sha512-OOmBcDdvKI70Jl7azzoCyGuWBTaUiLvxDkQYaU5G3Pufg2RsLV9p6zu253rmguRTpkt0X3HMevi8n0lic/32wg=="
     }
   ]
 }
