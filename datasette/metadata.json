@@ -1,6 +1,6 @@
 {
-  "title": "Interrupciones de Servicio Reportado por LUMA",
-  "description_html": "<p>Record de datos de interrupciones de servicio reportados por LUMA Energy en Puerto Rico a través de el portal de Mi LUMA.</p><p>Esto es un proyecto de código abierto y no está afiliado al Gobierno de Puerto Rico o LUMA Energy.</p>",
+  "title": "Interrupciones de Servicio Reportadas por LUMA",
+  "description_html": "<p>Record de datos de interrupciones de servicio reportadas por LUMA Energy en Puerto Rico a través de el portal de Mi LUMA.</p><p>Esto es un proyecto de código abierto y no está afiliado al Gobierno de Puerto Rico o LUMA Energy.</p>",
   "source": "Original Data Source",
   "source_url": "https://miluma.lumapr.com/outages/outageMap",
   "about_url": "https://github.com/jpadilla/tracking-luma-outages",
