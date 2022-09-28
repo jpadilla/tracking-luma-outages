@@ -29,7 +29,7 @@ run-scrape:
 
 publish:
 	datasette publish cloudrun \
-		--extra-options="--setting default_cache_ttl 300" \
+		--extra-options="--setting default_cache_ttl 300 --setting sql_time_limit_ms 5000" \
 		--metadata datasette/metadata.json \
 		--static static:datasette/static/ \
 		--template-dir=datasette/templates \
