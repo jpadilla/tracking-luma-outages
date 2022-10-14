@@ -33,6 +33,7 @@ publish:
 		--metadata datasette/metadata.json \
 		--static static:datasette/static/ \
 		--template-dir=datasette/templates \
+		--install datasette-block-robots \
 		--service=tracking-luma-outages \
 		datasette/data.db
 
