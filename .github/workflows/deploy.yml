@@ -13,8 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
         with:
           python-version: '3.x'
       - name: Get pip cache dir
@@ -31,13 +31,16 @@ jobs:
             ${{ runner.os }}-pip-
       - name: Install dependencies
         run: make install
-      - name: Set up Cloud Run
-        uses: google-github-actions/setup-gcloud@v0
+
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v1'
         with:
-          version: '275.0.0'
-          service_account_email: ${{ secrets.GCP_SERVICE_ACCOUNT_EMAIL }}
-          service_account_key: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER}}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT_EMAIL }}
+
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v1'
+      
       - name: Deploy to Cloud Run
         run: |-
           gcloud config set run/region us-central1
