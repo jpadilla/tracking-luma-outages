@@ -12,6 +12,9 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    permissions:
+      contents: 'read'
+      id-token: 'write'
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
@@ -40,7 +43,7 @@ jobs:
 
       - name: 'Set up Cloud SDK'
         uses: 'google-github-actions/setup-gcloud@v1'
-      
+
       - name: Deploy to Cloud Run
         run: |-
           gcloud config set run/region us-central1
