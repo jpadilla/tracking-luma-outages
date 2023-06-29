@@ -4,6 +4,7 @@ import json
 import os
 from pathlib import Path
 
+import structlog
 from sqlite_utils import Database
 
 from .scrape import get_clients_without_service, get_outages
@@ -16,6 +17,9 @@ RUNS_DATA_PATH = DATA_BASE_PATH / "runs"
 
 # Date format used for data files
 DATE_FORMAT_STR = "%Y%m%d%H"
+
+
+logger = structlog.get_logger()
 
 
 class JSONEncoder(json.JSONEncoder):
@@ -33,6 +37,8 @@ def calculate_checksum(results):
 
 def recreate_database():
     db = Database(DATASETTE_BASE_PATH / "data.db", recreate=True)
+
+    logger.info("recreating database")
 
     for entry in os.scandir(CUSTOMERS_DATA_PATH):
         if not entry.is_file():
@@ -74,7 +80,10 @@ def recreate_database():
 
 def main():
     now = datetime.datetime.utcnow()
-    filename = now.strftime(DATE_FORMAT_STR) + ".json"
+    now_str = now.strftime(DATE_FORMAT_STR)
+    filename = now_str + ".json"
+
+    logger.info("running scraper", date=now_str)
 
     clients_without_service = get_clients_without_service()
     with open(CUSTOMERS_DATA_PATH / filename, "w") as f:

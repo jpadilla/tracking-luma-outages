@@ -1,15 +1,32 @@
-import requests
+import random
 
-from src.constants import TOWNS
+import requests
+import structlog
+
+from src.constants import TOWNS, USER_AGENTS
+
+logger = structlog.get_logger()
+
+s = requests.Session()
+s.headers.update({"User-Agent": random.choice(USER_AGENTS)})
 
 
 def get_clients_without_service():
-    s = requests.Session()
+    # Loading this page first sets Incapsula cookies into session
+    # which seems to allow bypassing checks on further requests to AI.
+    r = s.get("https://miluma.lumapr.com", allow_redirects=True)
+
     r = s.get(
-        "https://api.miluma.lumapr.com/miluma-outage-api/outage/regionsWithoutService"
+        "https://api.miluma.lumapr.com/miluma-outage-api/outage/regionsWithoutService",
+        allow_redirects=True,
     )
 
-    response = r.json()
+    try:
+        response = r.json()
+    except requests.exceptions.JSONDecodeError as exc:
+        logger.error("error fetching clients without service", text=r.text)
+        raise exc
+
     results = []
 
     for row in response.get("regions") or []:
@@ -35,7 +52,13 @@ def get_outages():
         "https://api.miluma.lumapr.com/miluma-outage-api/outage/municipality/towns",
         json=TOWNS,
     )
-    response = r.json()
+
+    try:
+        response = r.json()
+    except requests.exceptions.JSONDecodeError as exc:
+        logger.error("error fetching outages", text=r.text)
+        raise exc
+
     results = []
 
     for region, outages in response.items():
