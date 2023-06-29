@@ -1,3 +1,4 @@
 requests
 sqlite-utils
 datasette
+structlog
