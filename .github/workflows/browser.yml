@@ -1,0 +1,37 @@
+name: wut
+
+on:
+  workflow_dispatch:
+
+jobs:
+  data:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/cache@v3
+        id: cache
+        with:
+          path: /tmp/wait-for-it.sh
+          key: 2
+
+      - name: Install Dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          curl -fsSL -o /tmp/wait-for-it.sh \
+            https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh
+          chmod +x /tmp/wait-for-it.sh
+
+      - name: Run
+        run: |
+          docker run -d \
+            -p 3000:3000 \
+            -e "SINGLE_RUN=true" \
+            -e "MAX_CONCURRENT_SESSIONS=1" \
+            -e "QUEUE_LENGTH=0" \
+            browserless/chrome
+          sleep 5
+          curl -X POST 'http://localhost:3000/function' -H 'Content-Type: application/json' -d '{
+            "code": "module.exports=async({page:page,context:context})=>{const{url:url}=context;await page.goto(url);const data=await page.evaluate((()=>JSON.stringify(document.body.innerText)));return{data:JSON.parse(data),type:\"application/json\"}};",
+            "context": {
+              "url": "https://api.miluma.lumapr.com/miluma-outage-api/outage/regionsWithoutService"
+            }
+          }'
