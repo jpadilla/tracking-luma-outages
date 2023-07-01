@@ -53,17 +53,19 @@ jobs:
         if: steps.scrape.outcome == 'failure'
         run: |
           sleep 5
-          curl --request POST \
+          curl -s --request POST \
             --url http://localhost:3000/function \
             --header 'Content-Type: application/json' \
             --data '{"code": "module.exports=async({page})=>{await page.goto(\"https://miluma.lumapr.com/outages/serviceStatus\");const xhrResponse=await page.waitForResponse(r=>r.request().url().includes(\"/outage/regionsWithoutService\")&&r.request().method()===\"GET\");const xhrPayload=await xhrResponse.json();return{data:xhrPayload,type:\"application/json\"}};"}' \
             --output /tmp/clients_without_service.json
+          jq -r '.' /tmp/clients_without_service.json
           sleep 5
-          curl --request POST \
+          curl -s --request POST \
             --url http://localhost:3000/function \
             --header 'Content-Type: application/json' \
             --data '{"code": "module.exports=async({page})=>{await page.goto(\"https://miluma.lumapr.com/outages/outageMap\");await page.setViewport({width:1440,height:800,deviceScaleFactor:1});await page.waitForSelector('\''.gm-control-active[title=\"Zoom out\"]'\'',{timeout:0});const zoHandle=await page.$('\''.gm-control-active[title=\"Zoom out\"]'\'');await page.evaluate(b=>{b.click();b.click();b.click();b.click();b.click()},zoHandle);await zoHandle.dispose();let xhrResponse=await page.waitForResponse(r=>r.request().url().includes(\"/outage/municipality/towns\")&&r.request().method()===\"POST\");let xhrPayload=await xhrResponse.json();return{data:xhrPayload,type:\"application/json\"}};"}' \
             --output /tmp/outages.json
+          jq -r '.' /tmp/outages.json
 
       - name: Scrape Alternative
         if: steps.scrape.outcome == 'failure'
