@@ -27,8 +27,55 @@ jobs:
             ${{ runner.os }}-pip-
       - name: Install dependencies
         run: make install
+
       - name: Scrape
+        id: scrape
         run: python -m src
+
+      - name: Cache Docker images
+        if: steps.scrape.outcome == 'failure'
+        uses: ScribeMD/docker-cache@0.3.3
+        with:
+          key: docker-browserless-chrome
+
+      - name: Run browserless
+        if: steps.scrape.outcome == 'failure'
+        run: |
+          docker run -d \
+            --name browserless \
+            -p 3000:3000 \
+            -e "MAX_CONCURRENT_SESSIONS=1" \
+            -e "QUEUE_LENGTH=0" \
+            browserless/chrome
+
+      - name: Scrape via browserless
+        if: steps.scrape.outcome == 'failure'
+        run: |
+          sleep 5
+          curl --request POST \
+            --url http://localhost:3000/function \
+            --header 'Content-Type: application/json' \
+            --data '{"code": "module.exports=async({page})=>{await page.goto(\"https://miluma.lumapr.com/outages/serviceStatus\");const xhrResponse=await page.waitForResponse(r=>r.request().url().includes(\"/outage/regionsWithoutService\")&&r.request().method()===\"GET\");const xhrPayload=await xhrResponse.json();return{data:xhrPayload,type:\"application/json\"}};"}' \
+            --output /tmp/clients_without_service.json
+          sleep 5
+          curl --request POST \
+            --url http://localhost:3000/function \
+            --header 'Content-Type: application/json' \
+            --data '{"code": "module.exports=async({page})=>{await page.goto(\"https://miluma.lumapr.com/outages/outageMap\");await page.setViewport({width:1440,height:800,deviceScaleFactor:1});await page.waitForSelector('\''.gm-control-active[title=\"Zoom out\"]'\'',{timeout:0});const zoHandle=await page.$('\''.gm-control-active[title=\"Zoom out\"]'\'');await page.evaluate(b=>{b.click();b.click();b.click();b.click();b.click()},zoHandle);await zoHandle.dispose();let xhrResponse=await page.waitForResponse(r=>r.request().url().includes(\"/outage/municipality/towns\")&&r.request().method()===\"POST\");let xhrPayload=await xhrResponse.json();return{data:xhrPayload,type:\"application/json\"}};"}' \
+            --output /tmp/outages.json
+
+      - name: Scrape Alternative
+        if: steps.scrape.outcome == 'failure'
+        run: python -m src
+        env:
+          CLIENTS_WITHOUT_SERVICE_FILE: /tmp/clients_without_service.json
+          OUTAGES_FILE: /tmp/outages.json
+
+      - name: Cleanup
+        if: always()
+        run: |
+          docker rm --force browserless || true
+
       - name: Commit to repository
         env:
           GITHUB_TOKEN: ${{ secrets.github_token }}

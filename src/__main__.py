@@ -18,6 +18,8 @@ RUNS_DATA_PATH = DATA_BASE_PATH / "runs"
 # Date format used for data files
 DATE_FORMAT_STR = "%Y%m%d%H"
 
+CLIENTS_WITHOUT_SERVICE_FILE = os.getenv("CLIENTS_WITHOUT_SERVICE_FILE")
+OUTAGES_FILE = os.getenv("OUTAGES_FILE")
 
 logger = structlog.get_logger()
 
@@ -85,11 +87,23 @@ def main():
 
     logger.info("running scraper", date=now_str)
 
-    clients_without_service = get_clients_without_service()
+    if CLIENTS_WITHOUT_SERVICE_FILE:
+        with open(CLIENTS_WITHOUT_SERVICE_FILE) as df:
+            data = json.load(df)
+        clients_without_service = get_clients_without_service(response=data)
+    else:
+        clients_without_service = get_clients_without_service()
+
     with open(CUSTOMERS_DATA_PATH / filename, "w") as f:
         json.dump(clients_without_service, f, cls=JSONEncoder)
 
-    outages = get_outages()
+    if OUTAGES_FILE:
+        with open(OUTAGES_FILE) as df:
+            data = json.load(df)
+        outages = get_outages(response=data)
+    else:
+        outages = get_outages()
+
     with open(OUTAGES_DATA_PATH / filename, "w") as f:
         json.dump(outages, f, cls=JSONEncoder)
 

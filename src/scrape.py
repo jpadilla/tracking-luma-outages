@@ -11,21 +11,18 @@ s = requests.Session()
 s.headers.update({"User-Agent": random.choice(USER_AGENTS)})
 
 
-def get_clients_without_service():
-    # Loading this page first sets Incapsula cookies into session
-    # which seems to allow bypassing checks on further requests to AI.
-    r = s.get("https://miluma.lumapr.com", allow_redirects=True)
+def get_clients_without_service(response=None):
+    if not response:
+        r = s.get(
+            "https://api.miluma.lumapr.com/miluma-outage-api/outage/regionsWithoutService",
+            allow_redirects=True,
+        )
 
-    r = s.get(
-        "https://api.miluma.lumapr.com/miluma-outage-api/outage/regionsWithoutService",
-        allow_redirects=True,
-    )
-
-    try:
-        response = r.json()
-    except requests.exceptions.JSONDecodeError as exc:
-        logger.error("error fetching clients without service", text=r.text)
-        raise exc
+        try:
+            response = r.json()
+        except requests.exceptions.JSONDecodeError as exc:
+            logger.error("error fetching clients without service", text=r.text)
+            raise exc
 
     results = []
 
@@ -46,18 +43,18 @@ def get_clients_without_service():
     return results
 
 
-def get_outages():
-    s = requests.Session()
-    r = s.post(
-        "https://api.miluma.lumapr.com/miluma-outage-api/outage/municipality/towns",
-        json=TOWNS,
-    )
+def get_outages(response=None):
+    if not response:
+        r = s.post(
+            "https://api.miluma.lumapr.com/miluma-outage-api/outage/municipality/towns",
+            json=TOWNS,
+        )
 
-    try:
-        response = r.json()
-    except requests.exceptions.JSONDecodeError as exc:
-        logger.error("error fetching outages", text=r.text)
-        raise exc
+        try:
+            response = r.json()
+        except requests.exceptions.JSONDecodeError as exc:
+            logger.error("error fetching outages", text=r.text)
+            raise exc
 
     results = []
 
