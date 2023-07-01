@@ -20,18 +20,27 @@ jobs:
             https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh
           chmod +x /tmp/wait-for-it.sh
 
+      - name: Cache Docker images
+        uses: ScribeMD/docker-cache@0.3.3
+        with:
+          key: docker-browserless-chrome
+
       - name: Run
         run: |
           docker run -d \
             -p 3000:3000 \
-            -e "SINGLE_RUN=true" \
             -e "MAX_CONCURRENT_SESSIONS=1" \
             -e "QUEUE_LENGTH=0" \
             browserless/chrome
           sleep 5
-          curl -X POST 'http://localhost:3000/function' -H 'Content-Type: application/json' -d '{
-            "code": "module.exports=async({page:page,context:context})=>{const{url:url}=context;await page.goto(url);const data=await page.evaluate((()=>JSON.stringify(document.body.innerText)));return{data:JSON.parse(data),type:\"application/json\"}};",
-            "context": {
-              "url": "https://api.miluma.lumapr.com/miluma-outage-api/outage/regionsWithoutService"
-            }
+          curl --request POST \
+            --url http://localhost:3000/function \
+            --header 'Content-Type: application/json' \
+            --data '{"code": "module.exports=async({page})=>{await page.goto(\"https://miluma.lumapr.com/outages/serviceStatus\");const xhrResponse=await page.waitForResponse(r=>r.request().url().includes(\"/outage/regionsWithoutService\")&&r.request().method()===\"GET\");const xhrPayload=await xhrResponse.json();return{data:xhrPayload,type:\"application/json\"}};"}'
+          sleep 5
+          curl --request POST \
+            --url http://localhost:3000/function \
+            --header 'Content-Type: application/json' \
+            --data '{
+            "code": "module.exports=async({page,context})=>{await page.goto(\"https://miluma.lumapr.com/outages/outageMap\");await page.setViewport({width:1440,height:800,deviceScaleFactor:1});await page.waitForSelector('\''.gm-control-active[title=\"Zoom out\"]'\'',{timeout:0});const zoHandle=await page.$('\''.gm-control-active[title=\"Zoom out\"]'\'');await page.evaluate(b=>{b.click();b.click();b.click();b.click();b.click()},zoHandle);await zoHandle.dispose();let xhrResponse=await page.waitForResponse(r=>r.request().url().includes(\"/outage/municipality/towns\")&&r.request().method()===\"POST\");let xhrPayload=await xhrResponse.json();return{data:xhrPayload,type:\"application/json\"}};"
           }'
