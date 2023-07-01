@@ -30,6 +30,7 @@ jobs:
 
       - name: Scrape
         id: scrape
+        continue-on-error: true
         run: python -m src
 
       - name: Cache Docker images
